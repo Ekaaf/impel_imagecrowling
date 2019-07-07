@@ -8,7 +8,7 @@
 </p>
 
 ## Running the project
-Clone the project and put laravel's default .env file in the root of the application. Then in apache server localhost, run the project by typing http://localhost/impelit/. No additional package has been used in this application. I have used php md5 hashing for matching files. So this project can be run by any other simple laravel project
+Clone the project and put laravel's default .env file in the root of the application. Then in apache server localhost, run the project by typing http://localhost/impelit/. No additional package has been used in this application. I have used php md5 hashing for matching files. So this project can be run like any other simple laravel project
 
 ## About Laravel
 
