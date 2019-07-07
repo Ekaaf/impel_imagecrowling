@@ -7,6 +7,9 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
 </p>
 
+## Running the project
+Clone the project and put laravel's default .env file in the root of the application. Then in apache server localhost, run the project by typing http://localhost/impelit/. No additional package has been used in this application. I have used php md5 hashing for matching files. So this project can be run by any other simple laravel project
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
