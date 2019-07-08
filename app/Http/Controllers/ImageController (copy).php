@@ -17,7 +17,7 @@ class ImageController extends Controller
 {
     public function index(){
         // $hasher = new ImageHash(new DifferenceHash());
-        // $hash1 = $hasher->hash('http://localhost/impelit/public/img/5d2324c59cc9e.png');
+        // $hash1 = $hasher->hash('http://www.praavahealth.com/public/images/praava%20logo+familydoctors.png');
         // $hash2 = $hasher->hash('http://www.praavahealth.com/public/images/praava%20logo+familydoctors.png');
 
         // $distance = $hasher->distance($hash1, $hash2);
@@ -27,7 +27,7 @@ class ImageController extends Controller
 
     public function matchimage(Request $request){
         libxml_use_internal_errors(true);
-        $imageurl = uniqid().'.'.$request->file('imagefile')->getClientOriginalExtension();
+        $imageurl = uniqid().'.jpg';
         $destinationPath = "public/img/";
         $request->file('imagefile')->move($destinationPath,$imageurl);
         $imageList = [];
@@ -85,7 +85,7 @@ class ImageController extends Controller
             }
             else{
                 $hasher = new ImageHash(new DifferenceHash());
-                $hash1 = $hasher->hash($destinationPath.$imageurl);
+                // $hash1 = $hasher->hash($destinationPath.$imageurl);
             }
             
             foreach ($images as $image) {
@@ -117,13 +117,10 @@ class ImageController extends Controller
                         }
                     }
                     else{
+                        $hash1 = $hasher->hash($destinationPath.$imageurl);
                         $hash2 = $hasher->hash($serverImagePath);
-                        // $hash2 = $hasher->hash($destinationPath.$imageurl);
                         $distance = $hasher->distance($hash1, $hash2);
-                        print_r($destinationPath.$imageurl);
-                        print_r($serverImagePath);
-                        print_r($distance);
-                        exit();
+                        // dd($distance);
                         if($distance<=5){
                             $imageList['matchedImages'][$i]['website'] = $url;
                             $imageList['matchedImages'][$i]['images'] = $serverImagePath;
@@ -142,7 +139,7 @@ class ImageController extends Controller
                         }
                     }
                 }
-                // dd($test);
+                dd($test);
             }
         }
         if(isset($imageList['matchedImages']) || isset($imageList['possibleMatches'])){

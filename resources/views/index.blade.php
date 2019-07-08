@@ -48,6 +48,10 @@
 			</div>
 		</div>
 		<div class="form-group">
+			<label class="radio-inline mr-3"><input type="radio" name="option" value="1" checked>  Using MD5</label>
+			<label class="radio-inline"><input type="radio" value="2" name="option">  Using Jessenger</label>
+		</div>
+		<div class="form-group">
 	  		<button type="submit" class="btn btn-primary">Submit</button>
 	  	</div>
 	</form>
