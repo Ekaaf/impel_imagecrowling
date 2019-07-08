@@ -41,12 +41,23 @@ class ImageController extends Controller
         foreach ($urls as $url) {
             $imageList = $this->exactImage($request, $url, $destinationPath,$imageurl);
         }
-        // dd($imageList);
         return view('imagelist')->with('matchedImages',$imageList['matchedImages'])->with('possibleMatches',$imageList['possibleMatches']);
     }
 
     public function exactImage($request, $url, $destinationPath,$imageurl){
-        $html = file_get_contents($url);
+
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+          CURLOPT_URL => $url,
+          CURLOPT_RETURNTRANSFER => true,
+          CURLOPT_ENCODING => "",
+          CURLOPT_MAXREDIRS => 10,
+          CURLOPT_TIMEOUT => 120,
+          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CUSTOMREQUEST => "GET"
+        ));
+        $html = curl_exec($curl);
+        // $html = file_get_contents($url);
         $dom = new \domDocument;
         $dom->loadHTML($html);
         $dom->preserveWhiteSpace = false;
@@ -55,31 +66,43 @@ class ImageController extends Controller
         $imageList['possibleMatches'] = [];
         $searchtags = $request->searchtags;
         $i = 0; $j = 0;
-        foreach ($images as $image) {
-            $src = $image->getAttribute('src');
-            if($src){
-                $alt = $image->getAttribute('alt');;
-                $fullPath = pathinfo($image->getAttribute('src'));
-                $fileName = $fullPath['filename'];
-                $serverImagePath = $fullPath['dirname'].'/'.rawurlencode($fullPath['basename']);
-                $md5image1 = md5(file_get_contents($destinationPath.$imageurl));
-                $md5image2 = md5(file_get_contents($serverImagePath));
-                if($md5image1==$md5image2){
-                    $imageList['matchedImages'][$i]['website'] = $url;
-                    $imageList['matchedImages'][$i]['images'] = $serverImagePath;
-                    $imageList['matchedImages'][$i]['src'] = $src;
-                    $i++;
-                }
-                foreach ($searchtags as $tag) {
-                    if($tag == $alt || $tag == $fileName){
-                        $imageList['possibleMatches'][$j]['website'] = $url;
-                        $imageList['possibleMatches'][$j]['images'] = $serverImagePath;
-                        $imageList['possibleMatches'][$j]['src'] = $src;
-                        $j++;
+        if($images && count($images)>0){
+            foreach ($images as $image) {
+                $src = $image->getAttribute('src');
+                if($src){
+                    $alt = $image->getAttribute('alt');
+                    $fullPath = pathinfo($src);
+                    $fileName = $fullPath['filename'];
+                    if (filter_var($src, FILTER_VALIDATE_URL)) {
+                        $serverImagePath = $fullPath['dirname'].'/'.rawurlencode($fullPath['basename']);
+                    } 
+                    else if(substr($src,0,2)==''){
+                        $serverImagePath = $src;
+                    }
+                    else{
+                        $parse = parse_url($url);
+                        $serverImagePath = $parse['scheme'].'://'.$parse['host'].'/'.$fullPath['dirname'].'/'.rawurlencode($fullPath['basename']);
+                    }
+                    
+                    $md5image1 = md5(file_get_contents($destinationPath.$imageurl));
+                    $md5image2 = md5(file_get_contents($serverImagePath));
+                    if($md5image1==$md5image2){
+                        $imageList['matchedImages'][$i]['website'] = $url;
+                        $imageList['matchedImages'][$i]['images'] = $serverImagePath;
+                        $imageList['matchedImages'][$i]['src'] = $src;
+                        $i++;
+                    }
+                    foreach ($searchtags as $tag) {
+                        if($tag!='' && ($tag == $alt || $tag == $fileName)){
+                            $imageList['possibleMatches'][$j]['website'] = $url;
+                            $imageList['possibleMatches'][$j]['images'] = $serverImagePath;
+                            $imageList['possibleMatches'][$j]['src'] = $src;
+                            $j++;
+                        }
                     }
                 }
+                
             }
-            
         }
         return $imageList;
     }
