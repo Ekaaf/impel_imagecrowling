@@ -24,7 +24,7 @@
 		    </tr>
 		    @endforeach
 		    @else
-		    <tr>
+		    <tr style="text-align: center;">
 		    	<td colspan="3">No image found</td>
 		    </tr>
 		    @endif
