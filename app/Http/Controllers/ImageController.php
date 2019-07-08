@@ -85,7 +85,7 @@ class ImageController extends Controller
             }
             else{
                 $hasher = new ImageHash(new DifferenceHash());
-                $hash1 = $hasher->hash($destinationPath.$imageurl);
+                $hash1 = $hasher->hash("http://localhost/impelit/".$destinationPath.$imageurl);
             }
             
             foreach ($images as $image) {
@@ -120,10 +120,6 @@ class ImageController extends Controller
                         $hash2 = $hasher->hash($serverImagePath);
                         // $hash2 = $hasher->hash($destinationPath.$imageurl);
                         $distance = $hasher->distance($hash1, $hash2);
-                        print_r($destinationPath.$imageurl);
-                        print_r($serverImagePath);
-                        print_r($distance);
-                        exit();
                         if($distance<=5){
                             $imageList['matchedImages'][$i]['website'] = $url;
                             $imageList['matchedImages'][$i]['images'] = $serverImagePath;
@@ -142,8 +138,9 @@ class ImageController extends Controller
                         }
                     }
                 }
-                // dd($test);
+                
             }
+            // dd($test);
         }
         if(isset($imageList['matchedImages']) || isset($imageList['possibleMatches'])){
             return $imageList;
